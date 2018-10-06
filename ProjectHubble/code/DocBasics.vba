@@ -41,10 +41,40 @@ Function ReadFileIntoCollection(filePath As String) As Collection
     Close #1
     Set ReadFileIntoCollection = recordSet
 End Function
+Sub TruncateContent(startTag As String, EndTag As String)
+    'without deleting the tags, delete everything between the start and end tag
+    
+End Sub
+
 Sub TestFileRead()
     Dim filePath As String
     Dim x As Collection
 
     filePath = "c:/temp/content.txt"
     Set x = ReadFileIntoCollection(filePath)
+End Sub
+Function GetWordDelimitedRange(startTag As String, EndTag As String)
+    'The found string/range excludes the values in the Tags
+    Dim rng1 As Range
+    Dim rng2 As Range
+    Dim strTheText As String
+
+    Set rng1 = ActiveDocument.Range
+    If rng1.Find.Execute(FindText:="summaries") Then
+        Set rng2 = ActiveDocument.Range(rng1.End, ActiveDocument.Range.End)
+        If rng2.Find.Execute(FindText:="EOS defects") Then
+            GetWordDelimitedRange = CStr(ActiveDocument.Range(rng1.End, rng2.Start).Text)
+        End If
+    End If
+End Function
+Sub TestGetWordDelimitedRange()
+    Dim a As String
+    Dim b As String
+    Dim retVal As String
+    
+    a = "summaries"
+    b = "EOS defects"
+    retVal = GetWordDelimitedRange(a, b)
+    MsgBox retVal
+    
 End Sub
