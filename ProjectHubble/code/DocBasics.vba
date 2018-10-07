@@ -1,4 +1,18 @@
 Option Explicit
+' Start Edit
+Const WORKING_FOLDER As String = "C:\GitHub\VBA-sandbox\ProjectHubble\documentation"
+Const DELIVERY_CONTENT_FILE = "content.txt"
+Const PATCH_NARRATIVE_FILE = "narrative.txt"
+' Stop Edit
+Const CONTENT_START_TAG As String = "[CONTENT-START]"
+Const CONTENT_END_TAG As String = "[CONTENT-END]"
+Const NARRATIVE_START_TAG As String = "[NARRATIVE-START]"
+
+Enum fileType
+    DeliveryContent = 1
+    PatchNarrative = 2
+End Enum
+
 Sub ReplaceText(textToFind As String, replacementText As Collection)
 Dim rng As Word.Range
 Dim textLine As Variant
@@ -23,12 +37,21 @@ Sub InsertContent()
     Dim replacementArray As Collection
     Dim filePath As String
     
-    textToFind = "[content-start]"
-    filePath = "c:/temp/content.txt"
-    Set replacementArray = ReadFileIntoCollection(filePath)
-    ReplaceText textToFind, replacementArray
+    Set replacementArray = ReadFileIntoCollection(DeliveryContent)
+    ReplaceText CONTENT_START_TAG, replacementArray
 End Sub
-Function ReadFileIntoCollection(filePath As String) As Collection
+Function ReadFileIntoCollection(file As fileType) As Collection
+    Dim filePath As String
+    
+    Select Case file
+        Case fileType.DeliveryContent
+            filePath = WORKING_FOLDER & "/" & DELIVERY_CONTENT_FILE
+        Case fileType.PatchNarrative
+            filePath = WORKING_FOLDER & "/" & PATCH_NARRATIVE_FILE
+        Case Else
+            MsgBox "Invalid parameter in [ReadFileIntoCollection]"
+    End Select
+            
     Open filePath For Input As #1
     Dim recordSet As Collection
     Set recordSet = New Collection
@@ -55,19 +78,11 @@ Function TruncateContent(startTag As String, endTag As String)
         If rng2.Find.Execute(FindText:=endTag) Then
             Set rng3 = ActiveDocument.Range(rng1.End, rng2.Start)
             rng3.Select
-            'hack to delete selected text and add a general purpose space
+            'hack to delete selected text
             Selection.TypeText " "
         End If
     End If
 End Function
-
-Sub TestFileRead()
-    Dim filePath As String
-    Dim x As Collection
-
-    filePath = "c:/temp/content.txt"
-    Set x = ReadFileIntoCollection(filePath)
-End Sub
 Function GetWordDelimitedRange(startTag As String, endTag As String)
     'The found string/range excludes the values in the Tags
     Dim rng1 As Range
@@ -92,19 +107,15 @@ Sub TestGetWordDelimitedRange()
     retVal = GetWordDelimitedRange(a, b)
     MsgBox retVal
 End Sub
-Sub TestTruncateContent()
-    Dim a As String
-    Dim b As String
-    Dim retVal As String
-    
-    a = "[CONTENT-START]"
-    b = "[CONTENT-END]"
-    retVal = TruncateContent(a, b)
-    
+Sub TestFileRead()
+    Dim filePath As String
+    Dim x As Collection
 
+    filePath = "c:/temp/content.txt"
+    Set x = ReadFileIntoCollection(filePath)
 End Sub
 Sub TestForIntegration()
-TestTruncateContent
-InsertContent
-
+    Dim retVal As String
+    retVal = TruncateContent(CONTENT_START_TAG, CONTENT_END_TAG)
+    InsertContent
 End Sub
