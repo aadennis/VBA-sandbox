@@ -41,10 +41,25 @@ Function ReadFileIntoCollection(filePath As String) As Collection
     Close #1
     Set ReadFileIntoCollection = recordSet
 End Function
-Sub TruncateContent(startTag As String, endTag As String)
+Function TruncateContent(startTag As String, endTag As String)
     'without deleting the tags, delete everything between the start and end tag
+    Dim rng1 As Range
+    Dim rng2 As Range
+    Dim rng3 As Range
     
-End Sub
+    Dim strTheText As String
+
+    Set rng1 = ActiveDocument.Range
+    If rng1.Find.Execute(FindText:=startTag) Then
+        Set rng2 = ActiveDocument.Range(rng1.End, ActiveDocument.Range.End)
+        If rng2.Find.Execute(FindText:=endTag) Then
+            Set rng3 = ActiveDocument.Range(rng1.End, rng2.Start)
+            rng3.Select
+            'hack to delete selected text
+            Selection.TypeText ""
+        End If
+    End If
+End Function
 
 Sub TestFileRead()
     Dim filePath As String
@@ -76,5 +91,15 @@ Sub TestGetWordDelimitedRange()
     b = "Corrective"
     retVal = GetWordDelimitedRange(a, b)
     MsgBox retVal
+End Sub
+Sub TestTruncateContent()
+ Dim a As String
+    Dim b As String
+    Dim retVal As String
     
+    a = "metre"
+    b = "Corrective"
+    retVal = TruncateContent(a, b)
+    
+
 End Sub
