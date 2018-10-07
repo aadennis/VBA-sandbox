@@ -4,7 +4,7 @@ Const WORKING_FOLDER As String = "C:\GitHub\VBA-sandbox\ProjectVEST\documentatio
 Const DELIVERY_CONTENT_FILE = "content.txt"
 Const PATCH_NARRATIVE_FILE = "patchNarrative.txt"
 ' Stop Edit
-Const CONTENT_START_TAG As String = "[CONTENT-START]"
+Const CONTENT_START_TAG As String = "[CONTENT-STARTx]"
 Const CONTENT_END_TAG As String = "[CONTENT-END]"
 Const NARRATIVE_START_TAG As String = "[NARRATIVE-START]"
 
@@ -115,6 +115,24 @@ Function GetWordDelimitedRange(startTag As String, endTag As String)
         End If
     End If
 End Function
+Function CheckIntegrity()
+    ' Check 1 - the 3 tags denoting the replacement positions must be found...
+    Dim rng As Range
+    Dim tagSet(2) As String
+    tagSet(0) = CONTENT_START_TAG
+    tagSet(1) = CONTENT_END_TAG
+    tagSet(2) = NARRATIVE_START_TAG
+    Dim tag As Variant
+    
+    For Each tag In tagSet
+        Set rng = ActiveDocument.Range
+        If Not rng.Find.Execute(FindText:=tag) Then
+            Err.Raise vbObjectError + 513, "fatal flaw", "Did not Find " & tag & " in file. Exiting run..."
+        End If
+    Next tag
+    MsgBox "Integrity check OK."
+    
+End Function
 Sub TestGetWordDelimitedRange()
     Dim a As String
     Dim b As String
@@ -132,9 +150,21 @@ Sub TestFileRead()
     filePath = "c:/temp/content.txt"
     Set x = ReadFileIntoCollection(filePath)
 End Sub
+Sub TestCheckIntegrity()
+    On Error GoTo errMyErrorHandler
+    CheckIntegrity
+errMyErrorHandler:
+     MsgBox Err.Description
+End Sub
 Sub TestForIntegration()
+    On Error GoTo errMyErrorHandler
     Dim retVal As String
+    CheckIntegrity
     retVal = TruncateContent(CONTENT_START_TAG, CONTENT_END_TAG)
     InsertContent
     InsertNarrative
+    
+    Exit Sub
+errMyErrorHandler:
+    MsgBox Err.Description
 End Sub
