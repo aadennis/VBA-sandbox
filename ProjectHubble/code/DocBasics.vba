@@ -55,8 +55,8 @@ Function TruncateContent(startTag As String, endTag As String)
         If rng2.Find.Execute(FindText:=endTag) Then
             Set rng3 = ActiveDocument.Range(rng1.End, rng2.Start)
             rng3.Select
-            'hack to delete selected text
-            Selection.TypeText ""
+            'hack to delete selected text and add a general purpose space
+            Selection.TypeText " "
         End If
     End If
 End Function
@@ -93,13 +93,18 @@ Sub TestGetWordDelimitedRange()
     MsgBox retVal
 End Sub
 Sub TestTruncateContent()
- Dim a As String
+    Dim a As String
     Dim b As String
     Dim retVal As String
     
-    a = "metre"
-    b = "Corrective"
+    a = "[CONTENT-START]"
+    b = "[CONTENT-END]"
     retVal = TruncateContent(a, b)
     
+
+End Sub
+Sub TestForIntegration()
+TestTruncateContent
+InsertContent
 
 End Sub
