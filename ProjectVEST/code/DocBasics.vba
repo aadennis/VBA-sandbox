@@ -4,7 +4,7 @@ Const WORKING_FOLDER As String = "C:\GitHub\VBA-sandbox\ProjectVEST\documentatio
 Const DELIVERY_CONTENT_FILE = "content.txt"
 Const PATCH_NARRATIVE_FILE = "patchNarrative.txt"
 ' Stop Edit
-Const CONTENT_START_TAG As String = "[CONTENT-STARTx]"
+Const CONTENT_START_TAG As String = "[CONTENT-START]"
 Const CONTENT_END_TAG As String = "[CONTENT-END]"
 Const NARRATIVE_START_TAG As String = "[NARRATIVE-START]"
 
