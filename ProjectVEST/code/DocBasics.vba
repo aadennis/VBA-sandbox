@@ -1,8 +1,8 @@
 Option Explicit
 ' Start Edit
-Const WORKING_FOLDER As String = "C:\GitHub\VBA-sandbox\ProjectHubble\documentation"
+Const WORKING_FOLDER As String = "C:\GitHub\VBA-sandbox\ProjectVEST\documentation"
 Const DELIVERY_CONTENT_FILE = "content.txt"
-Const PATCH_NARRATIVE_FILE = "narrative.txt"
+Const PATCH_NARRATIVE_FILE = "patchNarrative.txt"
 ' Stop Edit
 Const CONTENT_START_TAG As String = "[CONTENT-START]"
 Const CONTENT_END_TAG As String = "[CONTENT-END]"
@@ -40,6 +40,15 @@ Sub InsertContent()
     Set replacementArray = ReadFileIntoCollection(DeliveryContent)
     ReplaceText CONTENT_START_TAG, replacementArray
 End Sub
+Sub InsertNarrative()
+    Dim textToFind As String
+    Dim replacementArray As Collection
+    Dim filePath As String
+    
+    Set replacementArray = ReadFileIntoCollection(PatchNarrative)
+    ReplaceText NARRATIVE_START_TAG, replacementArray
+End Sub
+
 Function ReadFileIntoCollection(file As fileType) As Collection
     Dim filePath As String
     
@@ -53,15 +62,24 @@ Function ReadFileIntoCollection(file As fileType) As Collection
     End Select
             
     Open filePath For Input As #1
+    
     Dim recordSet As Collection
     Set recordSet = New Collection
     Dim temp As String
     
+    Dim found As Boolean
+    found = False
+    
     Do While Not EOF(1)
+        found = True
         Line Input #1, temp
         recordSet.Add temp
     Loop
     Close #1
+    If Not found Then
+        MsgBox "did not find [" & filePath & "]"
+        Exit Function
+    End If
     Set ReadFileIntoCollection = recordSet
 End Function
 Function TruncateContent(startTag As String, endTag As String)
@@ -118,4 +136,5 @@ Sub TestForIntegration()
     Dim retVal As String
     retVal = TruncateContent(CONTENT_START_TAG, CONTENT_END_TAG)
     InsertContent
+    InsertNarrative
 End Sub
