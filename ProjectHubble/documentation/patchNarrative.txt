@@ -1,14 +1,16 @@
 3.2.6
 EOS ID: 90823
-Problem: 1 millimetre spacing error in Reflective Null Corrective
-Solution: Delivery and deployment of the RocStar correcting mechanism
+Problem: The L1 HST specification requires a 0.1-arcsecond radius or greater. The telescope was restricted to a 0.7-arcsecond radius
+Solution: The deployed HST has been firmware-upgraded to deliver a 0.8-arcsecond radius
 
 EOS ID: 90809
-Problem: Paint used on Body Part 3 is not an approved pigment
-Solution: Zero-Hours subcontractors have applied 3 coats of Sandersons No.1 Brick paint (titanium white)
+Problem: The Faint Object Camera indicated a significant spherical aberration wavefront error in the secondary mirror.
+Solution: Contractors from the ISS were deployed to polish and retest the secondary mirror.
 
 EOS ID: 90806
-Problem: On-board computer reporting deficit in morale due to lengthy periods without Synth Contact
-Solution: Whatever it takes
+Problem: No redundant installations of the RNC were available in the current VEST configuration
+Solution: Additional budget was secured, and an additional RNC has now been deployed.
+
+
  
 
