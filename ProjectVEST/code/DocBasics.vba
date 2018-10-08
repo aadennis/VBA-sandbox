@@ -174,3 +174,6 @@ End Sub
 Sub TestConvertFacetedCodeToNarrative()
   MsgBox (ConvertFacetedCodeToNarrative("5.2.3999"))
 End Sub
+Sub TestInsertNarrative()
+  InsertNarrative
+End Sub
