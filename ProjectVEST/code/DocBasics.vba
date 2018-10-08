@@ -143,6 +143,26 @@ End Function
 Function ConvertFacetedCodeToNarrative(code As String)
   ConvertFacetedCodeToNarrative = "EOS Release " & Mid(code, 1, 3) & " Patch " & Mid(code, 5)
 End Function
+Sub DoStyles()
+Dim objDoc As Document
+Dim head1 As Style, head2 As Style, heading3 As Style, head4 As Style
+Dim NarrativeHeaderEnd As String
+NarrativeHeaderEnd = "Patch Release "
+Set objDoc = ActiveDocument
+Set heading3 = ActiveDocument.Styles("Heading 3")
+
+With objDoc.Content.Find
+    .ClearFormatting
+    .Text = NarrativeHeaderEnd
+    With .Replacement
+    .ClearFormatting
+    .Style = heading3
+    .Font.ColorIndex = wdPink
+    End With
+    .Execute Wrap:=wdFindContinue, Format:=True, Replace:=wdReplaceOne
+End With
+
+End Sub
 Sub TestGetWordDelimitedRange()
     Dim a As String
     Dim b As String
@@ -184,3 +204,8 @@ End Sub
 Sub TestInsertNarrative()
   InsertNarrative
 End Sub
+Sub TestDoStyles()
+  DoStyles
+
+End Sub
+
