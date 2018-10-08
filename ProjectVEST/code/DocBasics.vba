@@ -41,22 +41,24 @@ Sub InsertContent()
     ReplaceText CONTENT_START_TAG, replacementArray
 End Sub
 Sub InsertNarrative()
-    Dim textToFind As String
     Dim replacementArray As Collection
-    Dim filePath As String
-    
+    Dim tempElement As Variant
+        
     Set replacementArray = ReadFileIntoCollection(PatchNarrative)
     ReplaceText NARRATIVE_START_TAG, replacementArray
 End Sub
 
 Function ReadFileIntoCollection(file As fileType) As Collection
     Dim filePath As String
+    Dim IsPatchNarrative As Boolean
+    IsPatchNarrative = False
     
     Select Case file
         Case fileType.DeliveryContent
             filePath = WORKING_FOLDER & "/" & DELIVERY_CONTENT_FILE
         Case fileType.PatchNarrative
             filePath = WORKING_FOLDER & "/" & PATCH_NARRATIVE_FILE
+            IsPatchNarrative = True
         Case Else
             MsgBox "Invalid parameter in [ReadFileIntoCollection]"
     End Select
@@ -73,6 +75,11 @@ Function ReadFileIntoCollection(file As fileType) As Collection
     Do While Not EOF(1)
         found = True
         Line Input #1, temp
+        'special case for line 1 of patch narrative (hack)...
+        If (IsPatchNarrative) Then
+          IsPatchNarrative = False
+          temp = ConvertFacetedCodeToNarrative(temp)
+        End If
         recordSet.Add temp
     Loop
     Close #1
