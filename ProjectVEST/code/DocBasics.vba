@@ -133,6 +133,9 @@ Function CheckIntegrity()
     MsgBox "Integrity check OK."
     
 End Function
+Function ConvertFacetedCodeToNarrative(code As String)
+  ConvertFacetedCodeToNarrative = "EOS Release " & Mid(code, 1, 3) & " Patch " & Mid(code, 5)
+End Function
 Sub TestGetWordDelimitedRange()
     Dim a As String
     Dim b As String
@@ -167,4 +170,7 @@ Sub TestForIntegration()
     Exit Sub
 errMyErrorHandler:
     MsgBox Err.Description
+End Sub
+Sub TestConvertFacetedCodeToNarrative()
+  MsgBox (ConvertFacetedCodeToNarrative("5.2.3999"))
 End Sub
