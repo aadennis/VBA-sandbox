@@ -4,9 +4,9 @@ Const WORKING_FOLDER As String = "C:\GitHub\VBA-sandbox\ProjectVEST\documentatio
 Const DELIVERY_CONTENT_FILE = "content.txt"
 Const PATCH_NARRATIVE_FILE = "patchNarrative.txt"
 ' Stop Edit
-Const CONTENT_START_TAG As String = "[CONTENT-START]"
-Const CONTENT_END_TAG As String = "[CONTENT-END]"
-Const NARRATIVE_START_TAG As String = "[NARRATIVE-START]"
+Const CONTENT_START_TAG As String = "CONTENT-START"
+Const CONTENT_END_TAG As String = "CONTENT-END"
+Const NARRATIVE_START_TAG As String = "NARRATIVE-START"
 
 Enum fileType
     DeliveryContent = 1
@@ -14,8 +14,11 @@ Enum fileType
 End Enum
 
 Sub ReplaceText(textToFind As String, replacementText As Collection)
-Dim rng As Word.Range
+'Having found TextToFind, position the curstor immediately to the right of that string,
+'and insert the whole of replacementText, with a carriage return after each record
+' in the collection
 Dim textLine As Variant
+Dim rng As Word.Range
 
 Set rng = ActiveDocument.Range
   With rng.Find
@@ -28,6 +31,14 @@ Set rng = ActiveDocument.Range
   'Now move 1 character to the right to unset the selection...
   Selection.MoveRight 1
  
+  For Each textLine In replacementText
+    Selection.TypeText Chr(13) + textLine
+  Next textLine
+End Sub
+Sub InsertText(replacementText As Collection)
+' Insert the whole of replacementText (a collection containing 1 or more records) at the current cursor position.
+' That position was likely navigated to using some other, independent method.
+Dim textLine As Variant
   For Each textLine In replacementText
     Selection.TypeText Chr(13) + textLine
   Next textLine
@@ -49,6 +60,7 @@ Sub InsertNarrative()
 End Sub
 
 Function ReadFileIntoCollection(file As fileType) As Collection
+'Read a file from disk into a collection
     Dim filePath As String
     Dim IsPatchNarrative As Boolean
     IsPatchNarrative = False
@@ -146,23 +158,35 @@ End Function
 Sub DoStyles()
 Dim objDoc As Document
 Dim head1 As Style, head2 As Style, heading3 As Style, head4 As Style
-Dim NarrativeHeaderEnd As String
-NarrativeHeaderEnd = "Patch Release "
+Dim NarrativeHeader As String
+NarrativeHeader = "Patch Release 3.2 Patch 6"
 Set objDoc = ActiveDocument
-Set heading3 = ActiveDocument.Styles("Heading 3")
+
 
 With objDoc.Content.Find
     .ClearFormatting
-    .Text = NarrativeHeaderEnd
+    .Text = NarrativeHeader
     With .Replacement
     .ClearFormatting
     .Style = heading3
-    .Font.ColorIndex = wdPink
+    .Font.C = "Accent 1"
     End With
+    ' Here we do the actual replacement. Based on your requirements, this only replaces the
+    ' first instance it finds. You could also change this to Replace:=wdReplaceAll to catch
+    ' all of them.
     .Execute Wrap:=wdFindContinue, Format:=True, Replace:=wdReplaceOne
 End With
 
 End Sub
+Sub SelectCurrentParagraph()
+  Selection.Paragraphs(1).Range.Select
+  
+End Sub
+Sub ApplyStyleToCurrentParagraph()
+  SelectCurrentParagraph
+  
+End Sub
+
 Sub TestGetWordDelimitedRange()
     Dim a As String
     Dim b As String
@@ -172,13 +196,6 @@ Sub TestGetWordDelimitedRange()
     b = "Corrective"
     retVal = GetWordDelimitedRange(a, b)
     MsgBox retVal
-End Sub
-Sub TestFileRead()
-    Dim filePath As String
-    Dim x As Collection
-
-    filePath = "c:/temp/content.txt"
-    Set x = ReadFileIntoCollection(filePath)
 End Sub
 Sub TestCheckIntegrity()
     On Error GoTo errMyErrorHandler
@@ -207,5 +224,19 @@ End Sub
 Sub TestDoStyles()
   DoStyles
 
+End Sub
+Sub bookmarkandDown(bookmarkName)
+  Selection.GoTo What:=wdGoToBookmark, Name:=bookmarkName
+  Selection.MoveDown Unit:=wdLine, Count:=1
+End Sub
+
+Sub TestGotoBookmark()
+' Note that any use of bookmarks assumes they exist already in the host Word document
+  bookmarkandDown ("NARRATIVE_START")
+  Dim replacementArray As Collection
+  
+  'Selection.TypeText ConvertFacetedCodeToNarrative("3.2.3999") + Chr(13)
+  Set replacementArray = ReadFileIntoCollection(PatchNarrative)
+ InsertText replacementArray
 End Sub
 
