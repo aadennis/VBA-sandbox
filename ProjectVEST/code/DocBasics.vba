@@ -1,3 +1,5 @@
+'Assumptions
+'Any bookmarks, style names, referenced in here exist in the host document
 Option Explicit
 ' Start Edit
 Const WORKING_FOLDER As String = "C:\GitHub\VBA-sandbox\ProjectVEST\documentation"
@@ -243,3 +245,41 @@ Sub TestApplyStyle()
 
 ApplyStyleToCurrentParagraph ("EOSBullet2")
 End Sub
+
+Sub TestGetNarrativeIntoCollection()
+  Dim mockFile As New Collection
+  Dim narrative As New Collection
+  Dim a As Variant
+  Dim i As String
+  
+  mockFile.Add ("EOS ID: This is the entry")
+  mockFile.Add ("Problem: This is the problem")
+  mockFile.Add ("")
+  mockFile.Add ("Solution: This is the solution")
+    
+  For Each a In mockFile
+    'todo - add validation of the file content
+    i = CStr(a)
+    'lines can be empty (does this include the CR?)
+     narrative.Add (Split(a, ":", 2, vbTextCompare))
+   
+  Next
+  
+  Set a = Nothing
+  
+  For Each a In narrative
+    MsgBox (a(0))
+    MsgBox (a(1))
+  Next
+  
+  Set a = Nothing
+  Set mockFile = Nothing
+  Set narrative = Nothing
+
+
+End Sub
+Sub AddRecordToNarrative()
+  
+
+End Sub
+
