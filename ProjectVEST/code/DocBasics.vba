@@ -182,9 +182,9 @@ Sub SelectCurrentParagraph()
   Selection.Paragraphs(1).Range.Select
   
 End Sub
-Sub ApplyStyleToCurrentParagraph()
+Sub ApplyStyleToCurrentParagraph(styleName)
   SelectCurrentParagraph
-  
+  Selection.Style = ActiveDocument.Styles(styleName)
 End Sub
 
 Sub TestGetWordDelimitedRange()
@@ -239,4 +239,7 @@ Sub TestGotoBookmark()
   Set replacementArray = ReadFileIntoCollection(PatchNarrative)
  InsertText replacementArray
 End Sub
+Sub TestApplyStyle()
 
+ApplyStyleToCurrentParagraph ("EOSBullet2")
+End Sub
