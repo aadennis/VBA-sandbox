@@ -60,6 +60,40 @@ Sub InsertNarrative()
     Set replacementArray = ReadFileIntoCollection(PatchNarrative)
     ReplaceText NARRATIVE_START_TAG, replacementArray
 End Sub
+Function ReadFileIntoCollection2(filePath As String) As Collection
+'Read a file from disk into a collection
+'A key principle is that no validation of the file content happens during the read.
+'As the data sizes will always be trivial, the file is wholly read into a Collection
+'Any validation or trimming of the content happens in memory - files (until we decide later)
+'are always read-only
+
+    Dim recordSet As Collection: Set recordSet = New Collection
+    Dim recordFound As Boolean: recordFound = False
+    Dim temp As String
+    
+    If Dir(filePath) = "" Then
+   
+      MsgBox "file [" & filePath & "] does not exist. Exiting."
+      Exit Function
+    
+    End If
+    
+    Open filePath For Input As #1
+    Do While Not EOF(1)
+        recordFound = True
+        Line Input #1, temp
+        recordSet.Add temp
+    Loop
+    Close #1
+    
+    If Not recordFound Then
+        MsgBox "[" & filePath & "] contained no records"
+        Close #1
+        Exit Function
+    End If
+    Set ReadFileIntoCollection2 = recordSet
+     
+End Function
 
 Function ReadFileIntoCollection(file As fileType) As Collection
 'Read a file from disk into a collection
@@ -281,9 +315,25 @@ Debug.Assert narrative(1)(1) = " This is the entry"
   Set mockFile = Nothing
   Set narrative = Nothing
 End Sub
+Sub TestReadFileIntoCollection2()
+  'this test depends on a file at the location filePath,
+  'with this content (3 records):
+  'in the Town where I was born 22
+  'lived a MaN who sailed !! to sea
+  'And he told US OF HIS life
+  
+  Dim recordSet As Collection
+  Dim filePath As String: filePath = "c:/temp/test.txt"
+ 
+  Set recordSet = ReadFileIntoCollection2(filePath)
+  
+  Debug.Assert recordSet.Count = 3
+  Debug.Assert recordSet(1) = "in the Town where I was born 22"
+  
+  Set recordSet = Nothing
+
+End Sub
 Sub AddRecordToNarrative()
   
 
 End Sub
-
-
