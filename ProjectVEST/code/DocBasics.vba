@@ -171,7 +171,6 @@ With objDoc.Content.Find
     With .Replacement
     .ClearFormatting
     .Style = heading3
-    .Font.C = "Accent 1"
     End With
     ' Here we do the actual replacement. Based on your requirements, this only replaces the
     ' first instance it finds. You could also change this to Replace:=wdReplaceAll to catch
@@ -245,41 +244,46 @@ Sub TestApplyStyle()
 
 ApplyStyleToCurrentParagraph ("EOSBullet2")
 End Sub
-
-Sub TestGetNarrativeIntoCollection()
+Sub TestGetKeyValueCollectionFromRawCollection()
+  Const delim As String = ":" 'in the real world this will be passed in
+  
   Dim mockFile As New Collection
   Dim narrative As New Collection
-  Dim a As Variant
-  Dim i As String
+  Dim record As Variant
   
   mockFile.Add ("EOS ID: This is the entry")
   mockFile.Add ("Problem: This is the problem")
   mockFile.Add ("")
   mockFile.Add ("Solution: This is the solution")
+  mockFile.Add ("EOS ID: This is entry 2")
+  mockFile.Add ("Problem: This is problem 2")
+  mockFile.Add ("Solution: This is solution 2")
     
-  For Each a In mockFile
-    'todo - add validation of the file content
-    i = CStr(a)
-    'lines can be empty (does this include the CR?)
-     narrative.Add (Split(a, ":", 2, vbTextCompare))
-   
+  For Each record In mockFile
+    'Validate...
+    '1. lines can be empty...
+    If (Len(record) = 0) Then
+      GoTo Continue
+    End If
+    'Validation ok...
+    narrative.Add (Split(record, delim, 2, vbTextCompare))
+    
+Continue:
   Next
   
-  Set a = Nothing
-  
-  For Each a In narrative
-    MsgBox (a(0))
-    MsgBox (a(1))
-  Next
-  
-  Set a = Nothing
+Debug.Assert mockFile.Count = 7
+Debug.Assert narrative.Count = 6
+'note that the row is 1-based... but the column is zero-based...
+Debug.Assert narrative(1)(0) = "EOS ID"
+Debug.Assert narrative(1)(1) = " This is the entry"
+
+  Set record = Nothing
   Set mockFile = Nothing
   Set narrative = Nothing
-
-
 End Sub
 Sub AddRecordToNarrative()
   
 
 End Sub
+
 
