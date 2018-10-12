@@ -280,43 +280,7 @@ Attribute TestApplyStyle.VB_ProcData.VB_Invoke_Func = "Project.NewMacros.aaab"
 
 ApplyStyleToCurrentParagraph ("EOSBullet2")
 End Sub
-Sub TestGetKeyValueCollectionFromRawCollection()
-  Const delim As String = ":" 'in the real world this will be passed in
-  
-  Dim mockFile As New Collection
-  Dim narrative As New Collection
-  Dim record As Variant
-  
-  mockFile.Add ("EOS ID: This is the entry")
-  mockFile.Add ("Problem: This is the problem")
-  mockFile.Add ("")
-  mockFile.Add ("Solution: This is the solution")
-  mockFile.Add ("EOS ID: This is entry 2")
-  mockFile.Add ("Problem: This is problem 2")
-  mockFile.Add ("Solution: This is solution 2")
-    
-  For Each record In mockFile
-    'Validate...
-    '1. lines can be empty...
-    If (Len(record) = 0) Then
-      GoTo Continue
-    End If
-    'Validation ok...
-    narrative.Add (Split(record, delim, 2, vbTextCompare))
-    
-Continue:
-  Next
-  
-Debug.Assert mockFile.Count = 7
-Debug.Assert narrative.Count = 6
-'note that the row is 1-based... but the column is zero-based...
-Debug.Assert narrative(1)(0) = "EOS ID"
-Debug.Assert narrative(1)(1) = " This is the entry"
 
-  Set record = Nothing
-  Set mockFile = Nothing
-  Set narrative = Nothing
-End Sub
 
 Sub AddRecordToNarrative()
   
