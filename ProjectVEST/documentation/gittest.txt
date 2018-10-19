@@ -1,1 +1,3 @@
 some stuff
+This is a new line that I intend to commit to the master branch
+
